@@ -1,5 +1,7 @@
 version: 2.1
-
+orbs:
+  node: circleci/node@3.0.0
+  slack: circleci/slack@3.4.2
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -33,6 +35,18 @@ commands:
             fi
             
 jobs:
+  build-test-and-notify:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - slack/notify:
+          color: "#42e2f4"
+          mentions: "haitran,"
+          message: A custom message to notify the channel about the latest build
+      - slack/status:
+          fail_only: false
+          mentions: "haitran"
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -302,6 +316,8 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+      - build-test-and-notify:
+          requires:[test-frontend]
 #       - deploy-infrastructure:
 #           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
 #           filters:

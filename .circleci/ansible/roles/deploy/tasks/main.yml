@@ -1,18 +1,36 @@
-- name: "Move files to server"
+---
+- name: "upgrade packages."
   become: true
-  unarchive:
-    src: /root/project/backend.tar.gz
-    dest: /home/ubuntu
+  apt:
+    upgrade: "yes"
 
-- name: "install package"
+- name: "install dependencies."
+  become: true
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "install pm2"
+  become: true
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+- name: "Copy backend artifact"
+  copy:
+    src: artifact.tar.gz
+    dest: ~/artifact.tar.gz
+
+- name: "run app"
   shell: |
-    cd /home/ubuntu/backend
-    sudo npm install
-- name: "run migrations"
-  shell: |
-    cd /home/ubuntu/backend
-    sudo npm run migrations
-- name: Start PM2
-  shell: |
-    cd /home/ubuntu/backend
+    pwd
+    cd ~/home/ubuntu
+    mkdir backend
+    tar -xvf artifact.tar.gz -C backend
+    cd backend/
+    npm install && npm run build
+    pm2 stop all
     pm2 start npm --name backend -- start

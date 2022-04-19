@@ -224,8 +224,6 @@ jobs:
           name: Run migrations
           command: |
               cd backend
-              pwd
-              ls
               npm install
               npm run migrations > migration_${CIRCLE_WORKFLOW_ID:0:7}.txt
               cat migration_${CIRCLE_WORKFLOW_ID:0:7}.txt
@@ -236,11 +234,11 @@ jobs:
               if grep -q "has been executed successfully." ~/project/backend/migration_${CIRCLE_WORKFLOW_ID:0:7}.txt
               then
                 echo "migration has successfull"
-                curl --insecure https://kvdb.io/{{ lookup('env', 'KVDB_KEY')}}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+                curl --insecure https://kvdb.io/${KVDB_BUCKET_KEY}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
               fi
       - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-          bucket_key:  "{{ lookup('env', 'KVDB_KEY')}}"   
+          bucket_key: ${KVDB_BUCKET_KEY}
 
 #   deploy-frontend:
 #     docker:

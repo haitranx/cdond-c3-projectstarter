@@ -58,7 +58,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]
+          keys: [frontend-cache]
       - run:
           name: Build front-end
           command: |
@@ -75,7 +75,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [backend-cache]
       - run:
           name: Back-end build
           command: |
@@ -92,7 +92,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend_test]
+          keys: [frontend_cache]
       - run:
           name: Run frontend test
           command: |
@@ -106,7 +106,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend_test]
+          keys: [backend_cache]
       - run:
           name: Run backend test
           command: |
@@ -120,7 +120,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend_scan]
+          keys: [frontend_cache]
       - run:
           name: Run scan frontend
           command: |
@@ -134,7 +134,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend_scan]
+          keys: [backend_cache]
       - run:
           name: Run scan backend
           command: |
@@ -219,7 +219,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-migration]
+          keys: [backend-cache]
       - run:
           name: Run migrations
           command: |

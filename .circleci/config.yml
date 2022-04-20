@@ -39,19 +39,6 @@ commands:
               fi
             
 jobs:
-  build-test-and-notify:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - slack/notify:
-          color: "#42e2f4"
-          mentions: "haitran,"
-          message: A custom message to notify the channel about the latest build
-      - slack/status:
-          fail_only: false
-          mentions: "haitran"
-#########################
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -99,6 +86,9 @@ jobs:
             cd frontend
             npm install
             npm run test
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
 #########################
   test-backend:
     docker:
@@ -113,6 +103,9 @@ jobs:
             cd backend
             npm install
             npm run test
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
 #########################
   scan-frontend:
     docker:
@@ -177,6 +170,11 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
+      - slack/notify:
+          branch_pattern: main
+          channel: C01LUFSU1QR
+          event: fail
+          template: basic_fail_1
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 #########################
@@ -408,8 +406,6 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-      - build-test-and-notify:
-          requires: [test-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure:

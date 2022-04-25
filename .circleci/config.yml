@@ -74,6 +74,9 @@ jobs:
       - slack/notify:
           event: fail
           template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 #########################
   test-frontend:
     docker:
